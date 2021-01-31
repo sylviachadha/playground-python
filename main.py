@@ -27,12 +27,11 @@ class PythonHttpServer(SimpleHTTPRequestHandler):
 
         if url.path == "/python-retrieve-dashboard-data":
             query_components = dict(qc.split("=") for qc in query.split("&"))
-            start_date = query_components["start_date"]
-            end_date = query_components["end_date"]
+
             # start_date = '2020-01-02'
             # end_date = '2020-01-03'
 
-            python_dict = dashboard_plot.all_plots_dashboard_dict(start_date, end_date)
+            python_dict = dashboard_plot.all_plots_dashboard_dict(query_components)
         self.send_response(200)
         self.send_header('Content-type', 'application/json')
         self.end_headers()
