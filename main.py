@@ -2,6 +2,7 @@ import json
 
 from http.server import SimpleHTTPRequestHandler
 from plots import dashboard_plot
+from urllib.parse import urlparse
 
 
 class PythonHttpServer(SimpleHTTPRequestHandler):
@@ -19,8 +20,19 @@ class PythonHttpServer(SimpleHTTPRequestHandler):
 
     def do_GET(self):
         python_dict = {}
-        if self.path == "/python-retrieve-dashboard-data":
-            python_dict = dashboard_plot.all_plots_dashboard_dict()
+        url = urlparse(self.path)
+        query = urlparse(self.path).query
+
+        print(url.path, query)
+
+        if url.path == "/python-retrieve-dashboard-data":
+            query_components = dict(qc.split("=") for qc in query.split("&"))
+            start_date = query_components["start_date"]
+            end_date = query_components["end_date"]
+            # start_date = '2020-01-02'
+            # end_date = '2020-01-03'
+
+            python_dict = dashboard_plot.all_plots_dashboard_dict(start_date, end_date)
         self.send_response(200)
         self.send_header('Content-type', 'application/json')
         self.end_headers()
